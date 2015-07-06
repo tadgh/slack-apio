@@ -1,9 +1,9 @@
 /**
  * Created by garygraham on 7/2/15.
  */
+
 import com.google.common.io.CharStreams;
-import com.ullink.slack.simpleslackapi.SlackSession;
-import com.ullink.slack.simpleslackapi.SlackUser;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -14,9 +14,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import org.apache.http.*;
 
-import javax.json.JsonObject;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -24,20 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bot {
-    SlackSession session;
     private String api_key = "xoxb-7128609975-8YLfyQ6r5a7EEg8lZYb5UQLP";
-
 
     public Bot(String api_key) {
         this.api_key = api_key;
-        this.session = null;
     }
 
     public void listUsers(){
         HttpClient client = HttpClientBuilder.create().build();
         String req_string = "https://slack.com/api/users.list";
         HttpPost request = new HttpPost(req_string);
-        List<NameValuePair> nameValuePairList = new ArrayList<>();
+        List<BasicNameValuePair> nameValuePairList = new ArrayList<>();
         nameValuePairList.add(new BasicNameValuePair("token", api_key));
         try{
             request.setEntity(new UrlEncodedFormEntity(nameValuePairList, "UTF-8"));
@@ -62,7 +57,7 @@ public class Bot {
 
     public void greetTeam(List<SlackUser> users){
         for (SlackUser user: users){
-            if(isInboxVuduUserEmail(user.getUserMail())){
+            if(isInboxVuduUserEmail(user)){
                 greetInboxVuduUser(user);
             }else{
                 greetNonInboxVuduUser(user);
@@ -81,7 +76,7 @@ public class Bot {
     public void getDmChannelForUser(SlackUser user){
         //getSession().findChannelByName(user.getUserMail())
     }
-    public boolean isInboxVuduUserEmail(String mailbox){
+    public boolean isInboxVuduUserEmail(SlackUser user){
         //TODO make DB call to check if he exists in credentials.
         throw new NotImplementedException();
     }
